@@ -1,4 +1,4 @@
-// ✅ FULL APP.jsx — Neon Conscription Terminal (WORKING BASE VERSION)
+// ✅ FULL APP.jsx — Steel Conscription Terminal (WORKING BASE VERSION)
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
 
@@ -144,7 +144,7 @@ const lastTickSoundRef = useRef(0);
     const t = new Date();
     const stamp = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")} ${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")}`;
     return [
-      `// NEON DIRECTORATE :: CONSCRIPTION TERMINAL v3.7 (MIL-SPEC)`,
+      `// The Steel Legion :: CONSCRIPTION TERMINAL v3.7 (MIL-SPEC)`,
       `// BOOT: ${stamp}`,
       `INIT :: power_rail=OK  coolant=OK  chassis=SEALED`,
       `AUTH :: enclave_key=VALID  cipher=NOCTURNE-256`,
@@ -267,6 +267,7 @@ const [started, setStarted] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [complete, setComplete] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [showNotice, setShowNotice] = useState(false);
 
   const serviceNumber = useMemo(() => generateServiceNumber(name), [name]);
   const nodeId = useMemo(() => generateNodeId(name), [name]);
@@ -292,6 +293,8 @@ const [started, setStarted] = useState(false);
     setTimeout(() => {
       setScanning(false);
       setComplete(true);
+      setShowNotice(true);
+
 
       setShowOverlay(true);
       playGlitchSound();
@@ -540,11 +543,128 @@ const [started, setStarted] = useState(false);
           80% { clip-path: inset(55% 0 20% 0); transform: translate(2px,2px); }
           100% { clip-path: inset(10% 0 70% 0); transform: translate(0px,0px); }
         }
+/* --- Legion Seal (Watermark + Stamp) --- */
+.notice {
+  position: relative; /* required for watermark/stamp positioning */
+  overflow: hidden;
+}
+
+.sealWatermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0.50;               /* watermark strength */
+  filter: saturate(1.2);
+  transform: rotate(-10deg);
+}
+
+.sealRing {
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 204, 0.45);
+  box-shadow: 0 0 60px rgba(0, 255, 204, 0.12);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.sealRing::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 255, 204, 0.35);
+}
+
+.sealInner {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 204, 0.35);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.sealLogo {
+  font-size: 88px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: rgba(0, 255, 204, 0.55);
+  text-shadow: 0 0 22px rgba(0, 255, 204, 0.2);
+}
+
+.sealTextTop,
+.sealTextBottom {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  letter-spacing: 0.35em;
+  font-weight: 800;
+  color: rgba(0, 255, 204, 0.45);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sealTextTop { top: 26px; }
+.sealTextBottom { bottom: 26px; }
+
+/* --- Bottom centered stamp --- */
+.sealStamp {
+  border: 2px solid rgba(236, 72, 153, 0.55);
+  background: rgba(236, 72, 153, 0.08);
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  display: inline-block;
+}
+
+/* Put it at the bottom center of the NOTICE */
+.sealStampBottom {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%) rotate(-2deg);
+  z-index: 2;
+}
+
+/* Keep text styling */
+.sealStampTitle {
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  color: rgba(255, 200, 235, 0.95);
+  font-size: 14px;
+  text-align: center;
+}
+
+.sealStampSub {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  opacity: 0.9;
+  color: rgba(255, 200, 235, 0.85);
+  text-align: center;
+}
+
+.sealStampId {
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+  color: rgba(255, 200, 235, 0.8);
+  text-align: center;
+}
+
       `}</style>
 {!started ? (
         <div className="boot" style={{ textAlign: "center" }}>
           <div className="bootWrap" style={{ maxWidth: 500 }}>
-            <h2 style={{ marginBottom: 20 }}>NEON DIRECTORATE</h2>
+            <h2 style={{ marginBottom: 20 }}>The Steel Legion</h2>
 
             <button
               className="bootBtn primary"
@@ -554,7 +674,7 @@ const [started, setStarted] = useState(false);
                 setStarted(true);     // proceed to boot sequence
               }}
             >
-              INITIATE TERMINAL
+              ENLISTMENT TERMINAL // ACTIVATE
             </button>
           </div>
         </div>
@@ -569,7 +689,7 @@ const [started, setStarted] = useState(false);
             <AccessGranted serviceNumber={serviceNumber} nodeId={nodeId} />
           )}
 
-          <h1>Neon Conscription Terminal</h1>
+          <h1>Steel Conscription Terminal</h1>
 
           <input
             placeholder="Enter Name"
@@ -585,7 +705,81 @@ const [started, setStarted] = useState(false);
             <strong>Service Number:</strong>{" "}
             {complete ? serviceNumber : "ND-████-████-███"}
           </div>
+{showNotice && (
+  <div className="notice">
+
+<div className="sealWatermark" aria-hidden="true">
+  <div className="sealRing">
+    <div className="sealInner">
+      <div className="sealLogo">SL</div>
+      <div className="sealTextTop">The Steel Legion</div>
+      <div className="sealTextBottom">UNITY THROUGH STEEL</div>
+    </div>
+  </div>
+</div>
+
+    <div className="noticeHeader">
+      MANDATORY ENLISTMENT ORDER
+      <div className="noticeMotto">UNITY THROUGH STEEL</div>
+    </div>
+
+    <div className="noticeMeta">
+
+      <div><span>RECIPIENT:</span> {name}</div>
+      <div><span>SERVICE NO:</span> {serviceNumber}</div>
+      <div><span>NODE:</span> {nodeId}</div>
+      <div><span>STATUS:</span> SELECTED — HONOURS LIST</div>
+    </div>
+
+    <div className="noticeBody">
+      <p><strong>Citizen {name}, rejoice.</strong></p>
+
+      <p>
+        The Steel Legion has reviewed the living ledger and placed its mark upon you.
+        Among countless lives, yours has been measured and found <strong>worthy of service</strong>.
+        This distinction is beyond wealth, beyond family, beyond name.
+      </p>
+
+      <p>
+        You have been chosen to advance the <strong>Greater Glory of the Legion</strong>.
+        You will stand where others falter. You will hold where others break.
+        You will become a shining instrument of Directorate purpose—proof that order can be forged from chaos.
+      </p>
+
+      <p className="noticeOath">
+        “<strong>Unity Through Steel</strong>.”<br />
+        “Steel in the hand. Steel in the spine. Steel in the will.”
+      </p>
+
+      <div className="noticeCallout">
+        <div><span>REPORT WINDOW:</span> <strong>WITHIN 72 HOURS</strong></div>
+        <div><span>REPORT TO:</span> <strong>INTAKE LOCUS // SECTOR 7‑GLASS // BAY 13</strong></div>
+        <div><span>BRING:</span> <strong>THIS NOTICE</strong> (DIGITAL OR PRINTED) + <strong>BIOMETRIC CONFIRMATION</strong></div>
+        <div><span>DIRECTIVE:</span> <strong>COMPLIANCE IS CELEBRATED</strong></div>
+      </div>
+
+      <p className="noticeFine">
+        Failure to report constitutes breach of Mobilization Statute 9.13 and authorizes corrective retrieval.
+        Your compliance will be celebrated. Your absence will be corrected.
+      </p>
+    </div>
+
+    <div className="noticeActions">
+      <button onClick={() => window.print()}>Print / Save PDF</button>
+      <button className="secondary" onClick={() => setShowNotice(false)}>Hide Notice</button>
+    </div>
+<div className="sealStamp" aria-hidden="true">
+  <div className="sealStampTitle">VERIFIED</div>
+  <div className="sealStampSub">LEGION SEAL</div>
+  <div className="sealStampId">NODE: {nodeId}</div>
+</div>
+
+  </div>
+)}
+
         </div>
+
+
       )}
 </>
 );
